@@ -33,6 +33,19 @@
     box-shadow: 0 2px 10px rgba(0,0,0,0.15);
     display: flex;
     flex-direction: column;
+    margin-bottom: 20px;
+    page-break-after: always;
+  }
+
+  .page:last-child {
+    page-break-after: auto;
+  }
+
+  .page-label {
+    text-align: center;
+    font-size: 11px;
+    color: rgba(0,0,0,0.12);
+    margin-bottom: 4mm;
   }
 
   .name-date {
@@ -152,6 +165,7 @@
       width: 100%;
       min-height: auto;
       padding: 0;
+      margin-bottom: 0;
     }
     .no-print {
       display: none !important;
@@ -163,21 +177,30 @@
 
 <div class="no-print">
   <button class="btn-print" onclick="window.print()">🖨️ Print / Save as PDF</button>
-  <button class="btn-new" onclick="generateProblems()">🔄 New Questions</button>
+  <button class="btn-new" onclick="generateAll()">🔄 New Questions</button>
 </div>
 
-<div class="page">
-  <div class="name-date">
-    <div>Name: <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></div>
-    <div>Date: <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></div>
-  </div>
-  <div class="grid" id="grid"></div>
-</div>
+<div id="pages"></div>
 
 <script>
-  function generateProblems() {
-    var grid = document.getElementById('grid');
-    grid.innerHTML = '';
+  function generatePage(pageNum, totalPages) {
+    var page = document.createElement('div');
+    page.className = 'page';
+
+    var label = document.createElement('div');
+    label.className = 'page-label';
+    label.textContent = 'Page ' + pageNum + ' of ' + totalPages;
+    page.appendChild(label);
+
+    var nameDate = document.createElement('div');
+    nameDate.className = 'name-date';
+    nameDate.innerHTML =
+      '<div>Name: <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></div>' +
+      '<div>Date: <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></div>';
+    page.appendChild(nameDate);
+
+    var grid = document.createElement('div');
+    grid.className = 'grid';
 
     for (var i = 0; i < 30; i++) {
       var total = Math.floor(Math.random() * 14) + 2;
@@ -203,9 +226,21 @@
 
       grid.appendChild(problem);
     }
+
+    page.appendChild(grid);
+    return page;
   }
 
-  generateProblems();
+  function generateAll() {
+    var container = document.getElementById('pages');
+    container.innerHTML = '';
+    var totalPages = 4;
+    for (var p = 1; p <= totalPages; p++) {
+      container.appendChild(generatePage(p, totalPages));
+    }
+  }
+
+  generateAll();
 </script>
 
 </body>
